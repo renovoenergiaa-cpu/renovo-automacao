@@ -74,7 +74,7 @@ O maior kit gera 1.353 kWh, o que corresponde a uma conta de R$ 1.285. Quem digi
 | Conta de até R$ 200 | `conta_baixa` |
 | Consumo acima do que 20 painéis geram | `acima_do_limite` |
 | "Não sei" ou valor inválido | `conta_desconhecida` |
-| Telhado de fibrocimento, laje ou instalação em solo | `telhado_atipico` |
+| Telhado "Não sei" | `telhado_atipico` |
 | Cidade fora da lista | `cidade_a_confirmar` |
 
 Apartamento e condomínio recebem a estimativa, com ressalva no PDF.

@@ -91,7 +91,7 @@ Marca Renovo Energia Solar, logo e cores; Sorocaba e cerca de 45 km em volta; ki
 | Validade da estimativa: 7 dias | `config/empresa.json` |
 | Só kits de número par de painéis, como na tabela enviada | `config/parametros.json` (`kits`) |
 | Apartamento e condomínio recebem a estimativa, com ressalva | `config/parametros.json` (`imoveis`) |
-| Fibrocimento, laje e solo vão para análise humana | `config/parametros.json` (`telhados`) |
+| Todo telhado recebe estimativa; só "Não sei" vai para análise humana (decisão do cliente em 2026-10-06) | `config/parametros.json` (`telhados`) |
 | Retenção de dados: 180 dias | `src/app.js` (`retencaoDias`) |
 
 ## Pendências de validação

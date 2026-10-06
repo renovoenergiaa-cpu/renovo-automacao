@@ -69,6 +69,7 @@
     {
       "id": "naosei",
       "rotulo": "Não sei",
+      "analise_humana": true,
       "min": null,
       "max": null
     }
@@ -127,7 +128,6 @@
     {
       "id": "fibrocimento",
       "rotulo": "Fibrocimento",
-      "analise_humana": true,
       "sinonimos": [
         "eternit",
         "brasilit",
@@ -137,7 +137,6 @@
     {
       "id": "laje",
       "rotulo": "Laje",
-      "analise_humana": true,
       "sinonimos": [
         "laje"
       ]
@@ -145,7 +144,6 @@
     {
       "id": "solo",
       "rotulo": "Solo ou outro",
-      "analise_humana": true,
       "sinonimos": [
         "solo",
         "chao",
@@ -154,7 +152,8 @@
     },
     {
       "id": "naosei",
-      "rotulo": "Não sei"
+      "rotulo": "Não sei",
+      "analise_humana": true
     }
   ],
   "kits": [

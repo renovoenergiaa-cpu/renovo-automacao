@@ -7,7 +7,8 @@ Atualizado em: 2026-10-06
 
 - Feito: `src/waha.js` (webhook com HMAC, envio de texto e PDF, menu numerado no lugar de botões, vendedor assumindo pelo celular), escolha do provedor por `WAHA_URL`, serviço `waha` no `docker-compose.yml`, 94 testes passando.
 - Conferido na documentação do WAHA em 2026-10-06: desde a versão 2026.6.1 o envio de arquivos é gratuito; eventos `message.any` com `source` `api`/`app`; assinatura no cabeçalho `X-Webhook-Hmac` (SHA-512).
-- Não verificado com WhatsApp real: formato dos eventos em cada motor, campo `source`, número atrás de `@lid`, detecção de anúncio (`externalAdReply`), envio do PDF. Primeiro teste: `NUMEROS_TESTE` + roteiro em `docs/OPERACAO.md`, seção "WAHA".
+- Teste real em 2026-10-06 (WAHA 2026.9.2, motor WEBJS, Docker no PC do cliente, dois celulares de teste): jornada completa por menu numerado até o PDF entregue ao WAHA; outra conversa caiu em análise humana pela regra do orçamento. O remetente chega só como `@lid`: o bot traduz pelo endpoint `/api/{sessao}/lids/{lid}`. Um envio falhou com erro 500 do WAHA (`getChat` indefinido) e voltou sozinho em segundos; as repetições passaram a esperar 2 s e 8 s.
+- Ainda não verificado com WhatsApp real: vendedor assumindo pelo celular (campo `source`), detecção de anúncio (`externalAdReply`), lembretes, outros motores do WAHA.
 - Em aberto: risco de bloqueio do número por ser API não oficial; `docs/ESPEC.md`, `docs/FUNIL.md` e `docs/TESTES.md` ainda descrevem a YCloud e os botões.
 - Recibos de entrega do PDF não existem no WAHA nesta versão do adaptador: a proposta fica como "accepted".
 

@@ -59,7 +59,7 @@ export function criarApp({ db, wa, cfg, opcoes = {}, agora = () => Date.now(), l
 
   async function processar(id, ev) {
     try {
-      const m = interpretar(ev)
+      const m = await interpretar(ev)
       if (m) await emFila(m.telefone ?? 'status', () => tratar(m))
       db.marcarProcessado(id, agora())
     } catch (e) {

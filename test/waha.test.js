@@ -83,6 +83,14 @@ test('cliente: menu numerado, PDF em base64, chave no cabeçalho e repetição e
   assert.deepEqual(pedidos[2].corpo, { session: 'default', chatId: '99887766@lid', file: { mimetype: 'application/pdf', filename: 'Estimativa.pdf', data: Buffer.from('%PDF-teste').toString('base64') }, caption: 'Estimativa nº 1' })
 
   assert.equal(montarMenu({ texto: 'P', opcoes: [{ titulo: 'A' }] }, ''), 'P\n\n*1.* A')
+
+  // Remetente escondido atrás de @lid: o cliente pergunta o número ao WAHA uma vez e guarda.
+  const consultas = []
+  const wa2 = criarCliente({ url: 'http://waha', apiKey: 'k', espera: async () => {}, fetch: async (url) => (consultas.push(url), { ok: true, json: async () => ({ lid: '99887766@lid', pn: '5511999990001@c.us' }) }) })
+  assert.equal((await wa2.interpretar(evento({ id: 'l1', from: '99887766@lid', body: 'oi' }))).telefone, TEL)
+  assert.deepEqual(await wa2.interpretar(evento({ id: 'l2', fromMe: true, source: 'app', to: '99887766@lid', body: 'oi' })), { tipo: 'eco', telefone: TEL })
+  assert.deepEqual(consultas, ['http://waha/api/default/lids/99887766%40lid'])
+  assert.equal(await wa2.interpretar({ event: 'message.ack', payload: { id: 'x' } }), null)
 })
 
 test('servidor com WAHA: jornada por menu numerado e vendedor assumindo', async () => {

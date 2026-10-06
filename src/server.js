@@ -72,13 +72,14 @@ function iniciar() {
     await fetch(`https://ntfy.sh/${encodeURIComponent(env.NTFY_TOPICO)}`, { method: 'POST', headers: { Title: cfg.empresa.nome_curto }, body: texto, signal: AbortSignal.timeout(10000) })
   }
 
+  const wa = usaWaha
+    ? waha.criarCliente({ url: env.WAHA_URL, apiKey: env.WAHA_API_KEY, sessao: env.WAHA_SESSAO || 'default', instrucao: cfg.textos.instrucao_menu })
+    : ycloud.criarCliente({ apiKey: env.YCLOUD_API_KEY, numero: env.WHATSAPP_NUMERO })
   const app = criarApp({
     db,
     cfg,
-    wa: usaWaha
-      ? waha.criarCliente({ url: env.WAHA_URL, apiKey: env.WAHA_API_KEY, sessao: env.WAHA_SESSAO || 'default', instrucao: cfg.textos.instrucao_menu })
-      : ycloud.criarCliente({ apiKey: env.YCLOUD_API_KEY, numero: env.WHATSAPP_NUMERO }),
-    interpretar: usaWaha ? waha.interpretar : ycloud.interpretar,
+    wa,
+    interpretar: usaWaha ? wa.interpretar : ycloud.interpretar,
     notificar,
     opcoes: { numerosTeste, botSemAnuncio: env.BOT_SEM_ANUNCIO === '1', dirPropostas: join(dir, 'propostas') },
   })

@@ -89,12 +89,30 @@ export function criarCliente({ url, apiKey, sessao = 'default', instrucao = '', 
       } catch (e) {
         erro = e // WAHA fora do ar ou tempo esgotado
       }
-      if (i < TENTATIVAS) await espera(500 * 4 ** (i - 1))
+      // 2 s e 8 s: o WhatsApp Web recarrega a página sozinho de vez em quando e o WAHA responde 500 por alguns segundos.
+      if (i < TENTATIVAS) await espera(2000 * 4 ** (i - 1))
     }
     throw erro
   }
 
+  // O motor WEBJS entrega o remetente só como "@lid"; o WAHA sabe traduzir para o número.
+  const numeros = new Map() // ponytail: memória sem limite; some ao reiniciar. Trocar por tabela se passar de dezenas de milhares de contatos.
+  async function numeroDe(lid) {
+    if (!numeros.has(lid)) {
+      const r = await buscar(`${base}/api/${sessao}/lids/${encodeURIComponent(lid)}`, { headers: { 'X-Api-Key': apiKey }, signal: AbortSignal.timeout(15000) })
+      if (!r.ok) throw new Error(`WAHA respondeu ${r.status} ao traduzir ${lid}`) // o evento fica pendente e é tentado de novo
+      const { pn } = await r.json()
+      numeros.set(lid, pn ? e164(pn.split('@')[0]) : lid)
+    }
+    return numeros.get(lid)
+  }
+
   return {
+    async interpretar(ev) {
+      const m = interpretar(ev)
+      if (m?.telefone?.endsWith('@lid')) m.telefone = await numeroDe(m.telefone)
+      return m
+    },
     texto: (para, texto) => enviar('/api/sendText', para, { text: texto }),
     opcoes: (para, acao) => enviar('/api/sendText', para, { text: montarMenu(acao, instrucao) }),
     async documento(para, { caminho, nome, legenda }) {
