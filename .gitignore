@@ -21,8 +21,5 @@ __pycache__/
 graphify-out/
 .DS_Store
 
-# skills de terceiros instaladas para o desenvolvimento: reinstalar com
-#   npx skills experimental_install   (lê skills-lock.json)
-#   graphify install --project
-.claude/skills/
+# cópia de segurança criada pelo instalador do graphify
 .claude/*.graphify-bak

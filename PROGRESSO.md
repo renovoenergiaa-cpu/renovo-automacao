@@ -38,7 +38,7 @@ A chave da API foi colada no chat: o cliente deve excluí-la no painel e gerar o
 - [ ] Aprovação final da tabela (`meta.aprovado` continua `false`; PDF sai como rascunho).
 - [ ] CNPJ, contatos, garantias e condições para o PDF.
 - [ ] Validação de privacidade (LGPD) e do prazo de retenção.
-- [x] Código no GitHub desde 2026-10-06: https://github.com/renovoenergiaa-cpu/renovo-automacao (público, por decisão do cliente). Ficam fora do repositório: `.env`, `data/`, `insumos/`, `graphify-out/` e `.claude/skills/`.
+- [x] Código no GitHub desde 2026-10-06: https://github.com/renovoenergiaa-cpu/renovo-automacao (público, por decisão do cliente). Ficam fora do repositório: `.env`, `data/`, `insumos/` e `graphify-out/`. As skills de `.claude/skills/` foram incluídas a pedido do cliente, com as licenças em `licencas-terceiros/`.
 
 ## Dados do cliente (2026-10-04)
 - Renovo Energia Solar (antes Solturi Energia Solar Sorocaba). Azul-marinho #042C74 e laranja #EC6C1C. Logo em `config/logo.png`; originais em `insumos/`.
