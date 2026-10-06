@@ -1,16 +1,19 @@
-// Servidor HTTP: recebe os webhooks da YCloud e roda o relógio de lembretes.
+// Servidor HTTP: recebe os webhooks do provedor (WAHA ou YCloud) e roda o relógio de lembretes.
 import { createServer } from 'node:http'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { carregarConfig } from './config.js'
 import { abrirBanco } from './db.js'
-import { criarCliente, verificarAssinatura, e164 } from './ycloud.js'
+import * as ycloud from './ycloud.js'
+import * as waha from './waha.js'
 import { criarApp } from './app.js'
 
 const LIMITE_CORPO = 1_000_000 // bytes
+const YCLOUD = { caminho: '/webhook/ycloud', cabecalho: 'ycloud-signature', verificar: ycloud.verificarAssinatura }
+export const WAHA = { caminho: '/webhook/waha', cabecalho: 'x-webhook-hmac', verificar: waha.verificarAssinatura, idDoEvento: waha.idDoEvento }
 
-export function criarServidor({ app, db, segredo }) {
+export function criarServidor({ app, db, segredo, provedor = YCLOUD }) {
   return createServer((req, res) => {
     const responder = (status, corpo = {}) => {
       res.writeHead(status, { 'Content-Type': 'application/json' })
@@ -18,7 +21,7 @@ export function criarServidor({ app, db, segredo }) {
     }
     if (req.method === 'GET' && req.url === '/saude')
       return responder(200, { ok: true, pendentes: db.contarPendentes(), pausado: db.ajuste('pausado') === '1', uso_real: app.real })
-    if (req.method !== 'POST' || req.url !== '/webhook/ycloud') return responder(404)
+    if (req.method !== 'POST' || req.url !== provedor.caminho) return responder(404)
 
     const partes = []
     let tamanho = 0
@@ -33,14 +36,15 @@ export function criarServidor({ app, db, segredo }) {
       if (res.writableEnded) return
       const bruto = Buffer.concat(partes).toString('utf8')
       // A assinatura é conferida sobre o corpo bruto, antes de interpretar qualquer coisa.
-      if (!verificarAssinatura(req.headers['ycloud-signature'], bruto, segredo)) return responder(401)
+      if (!provedor.verificar(req.headers[provedor.cabecalho], bruto, segredo)) return responder(401)
       let ev
       try {
         ev = JSON.parse(bruto)
       } catch {
         return responder(400)
       }
-      app.receber(ev) // grava o evento e segue em segundo plano; a YCloud espera uma resposta rápida
+      if (ev && !ev.id) ev.id = provedor.idDoEvento?.(ev)
+      app.receber(ev) // grava o evento e segue em segundo plano; o provedor espera uma resposta rápida
       responder(200, { ok: true })
     })
   })
@@ -48,7 +52,9 @@ export function criarServidor({ app, db, segredo }) {
 
 function iniciar() {
   const env = process.env
-  const faltando = ['YCLOUD_API_KEY', 'YCLOUD_WEBHOOK_SECRET', 'WHATSAPP_NUMERO'].filter((v) => !env[v])
+  const usaWaha = !!env.WAHA_URL // WAHA_URL preenchido escolhe o WAHA; sem ele, vale a YCloud
+  const exigidas = usaWaha ? ['WAHA_API_KEY', 'WAHA_WEBHOOK_SECRET'] : ['YCLOUD_API_KEY', 'YCLOUD_WEBHOOK_SECRET', 'WHATSAPP_NUMERO']
+  const faltando = exigidas.filter((v) => !env[v])
   if (faltando.length) {
     console.error(`Variáveis ausentes: ${faltando.join(', ')}. Copie .env.example para .env e preencha.`)
     process.exit(1)
@@ -58,7 +64,7 @@ function iniciar() {
   const dir = env.DADOS_DIR ?? 'data'
   mkdirSync(dir, { recursive: true, mode: 0o700 })
   const db = abrirBanco(join(dir, 'bot.sqlite'))
-  const numerosTeste = (env.NUMEROS_TESTE ?? '').split(',').map((s) => s.trim()).filter(Boolean).map(e164)
+  const numerosTeste = (env.NUMEROS_TESTE ?? '').split(',').map((s) => s.trim()).filter(Boolean).flatMap(usaWaha ? waha.variantesBR : ycloud.e164)
 
   const notificar = async (texto) => {
     if (!env.NTFY_TOPICO) return
@@ -69,7 +75,10 @@ function iniciar() {
   const app = criarApp({
     db,
     cfg,
-    wa: criarCliente({ apiKey: env.YCLOUD_API_KEY, numero: env.WHATSAPP_NUMERO }),
+    wa: usaWaha
+      ? waha.criarCliente({ url: env.WAHA_URL, apiKey: env.WAHA_API_KEY, sessao: env.WAHA_SESSAO || 'default', instrucao: cfg.textos.instrucao_menu })
+      : ycloud.criarCliente({ apiKey: env.YCLOUD_API_KEY, numero: env.WHATSAPP_NUMERO }),
+    interpretar: usaWaha ? waha.interpretar : ycloud.interpretar,
     notificar,
     opcoes: { numerosTeste, botSemAnuncio: env.BOT_SEM_ANUNCIO === '1', dirPropostas: join(dir, 'propostas') },
   })
@@ -81,11 +90,12 @@ function iniciar() {
     )
     process.exit(1)
   }
-  if (!app.real) console.warn(`MODO DE TESTE: tabela ainda não aprovada. Só respondo a ${numerosTeste.length} número(s) de teste; o PDF sai com marca d'água.`)
+  if (!app.real) console.warn(`MODO DE TESTE: tabela ainda não aprovada. Só respondo aos números de teste; o PDF sai com marca d'água.`)
 
-  const servidor = criarServidor({ app, db, segredo: env.YCLOUD_WEBHOOK_SECRET })
+  const provedor = usaWaha ? WAHA : YCLOUD
+  const servidor = criarServidor({ app, db, provedor, segredo: usaWaha ? env.WAHA_WEBHOOK_SECRET : env.YCLOUD_WEBHOOK_SECRET })
   const porta = Number(env.PORTA ?? 3000)
-  servidor.listen(porta, () => console.log(`Bot no ar na porta ${porta}. Webhook: POST /webhook/ycloud · Saúde: GET /saude`))
+  servidor.listen(porta, () => console.log(`Bot no ar na porta ${porta}. Webhook: POST ${provedor.caminho} · Saúde: GET /saude`))
   const relogio = setInterval(() => app.tique().catch((e) => console.error('tique falhou:', e.message)), 60_000)
 
   for (const sinal of ['SIGINT', 'SIGTERM'])

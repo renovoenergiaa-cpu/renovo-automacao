@@ -4,13 +4,13 @@ Lead do Meta Ads → WhatsApp → 4 perguntas por botões/listas → PDF de esti
 Ao retomar, leia `PROGRESSO.md` primeiro. Especificação em `docs/ESPEC.md`.
 
 ## Decisões
-- API oficial do WhatsApp via YCloud, com coexistência (vendedor no app, mesmo número). Só `src/ycloud.js` conhece o provedor.
-- Backend Node 22 sem framework; SQLite nativo (`node:sqlite`); única dependência: pdfkit. Sem n8n.
+- WhatsApp via WAHA (não oficial, QR code) desde 2026-10-06, por decisão do cliente depois do bloqueio da conta na Meta. Sem botões: menu numerado. `src/waha.js` é o adaptador; `src/ycloud.js` (API oficial) continua no código e vale quando `WAHA_URL` está vazio.
+- Backend Node 22 sem framework; SQLite nativo (`node:sqlite`); única dependência: pdfkit. O WAHA fala direto com o bot. Sem n8n (confirmado pelo cliente em 2026-10-06).
 - Fluxo determinístico, sem IA em produção. O que o bot não entende vai para uma pessoa.
 - Custo zero de mensagens: por padrão o bot só fala na janela gratuita de 72h aberta por anúncio (`BOT_SEM_ANUNCIO=0`).
 
 ## Comandos
-- `npm test` — 88 testes (WhatsApp simulado). Lógica usa tabela fixa em `test/`; a real é conferida em `test/config-real.test.js`.
+- `npm test` — 94 testes (WhatsApp simulado). Lógica usa tabela fixa em `test/`; a real é conferida em `test/config-real.test.js`.
 - `npm run exemplo` — gera os PDFs em `exemplos/`.
 - `npm start` — exige `.env`; `npm run cli -- relatorio|leads|venda|pausar|retomar|devolver|apagar`.
 - Nesta máquina, HTTPS no Node só funciona com `SSL_CERT_FILE=/usr/local/etc/ca-certificates/cert.pem`.

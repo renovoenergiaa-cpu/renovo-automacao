@@ -5,7 +5,7 @@ import { rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { passo, pergunta } from './funil.js'
 import { usoReal } from './orcamento.js'
-import { interpretar } from './ycloud.js'
+import { interpretar as interpretarPadrao } from './ycloud.js'
 import { gerarPdf as gerarPdfPadrao, documentoDaProposta, numeroProposta, VERSAO_TEMPLATE } from './pdf.js'
 
 const MIN = 60_000
@@ -30,7 +30,7 @@ export const PADROES = {
 const mascarar = (tel) => `…${String(tel).slice(-4)}`
 const horaLocal = (ms) => Number(new Intl.DateTimeFormat('pt-BR', { hour: 'numeric', hourCycle: 'h23', timeZone: 'America/Sao_Paulo' }).format(new Date(ms)))
 
-export function criarApp({ db, wa, cfg, opcoes = {}, agora = () => Date.now(), log = console, notificar = async () => {}, gerarPdf = gerarPdfPadrao }) {
+export function criarApp({ db, wa, cfg, opcoes = {}, agora = () => Date.now(), log = console, notificar = async () => {}, gerarPdf = gerarPdfPadrao, interpretar = interpretarPadrao }) {
   const o = { ...PADROES, ...opcoes }
   const real = usoReal(cfg.parametros, cfg.empresa)
   const filas = new Map()
@@ -118,7 +118,10 @@ export function criarApp({ db, wa, cfg, opcoes = {}, agora = () => Date.now(), l
     if (!podeFalar(c, t)) return semResposta('sem_anuncio') // fora da janela gratuita: responder custaria
 
     const ctx = { ...cfg, nomePerfil: c.nome_perfil, retorno: inativoH >= o.retornoH }
-    const r = passo(c.estado, m.entrada, ctx)
+    // Resposta "2" vale como toque na 2ª opção da última pergunta enviada (no WAHA não há botões, só menu numerado).
+    const n = m.entrada.tipo === 'texto' && /^\s*\d{1,2}\s*$/.test(m.entrada.texto) && Number(m.entrada.texto)
+    const entrada = n && c.estado.menu?.[n - 1] ? { tipo: 'opcao', id: c.estado.menu[n - 1] } : m.entrada
+    const r = passo(c.estado, entrada, ctx)
     c.estado = r.conv
     const eventos = r.acoes.filter((a) => a.tipo === 'evento')
     if (eventos.some((e) => e.nome === 'conversa_iniciada')) {
@@ -138,11 +141,14 @@ export function criarApp({ db, wa, cfg, opcoes = {}, agora = () => Date.now(), l
   }
 
   async function executar(c, acoes) {
+    let menu // ids das opções da última pergunta que saiu; sem pergunta nova, o menu antigo deixa de valer
     for (const a of acoes) {
       try {
         if (a.tipo === 'texto') await wa.texto(c.telefone, a.texto, `conv:${c.id}`)
-        else if (a.tipo === 'opcoes') await wa.opcoes(c.telefone, a, `conv:${c.id}`)
-        else if (a.tipo === 'proposta') await enviarProposta(c, a.orcamento)
+        else if (a.tipo === 'opcoes') {
+          await wa.opcoes(c.telefone, a, `conv:${c.id}`)
+          menu = a.opcoes.map((x) => x.id)
+        } else if (a.tipo === 'proposta') await enviarProposta(c, a.orcamento)
         else if (a.tipo === 'humano') avisarEquipe(`Atendimento humano solicitado (${a.motivo}), telefone final ${c.telefone.slice(-4)}${c.estado.dados?.cidade ? ', ' + c.estado.dados.cidade : ''}.`)
       } catch (e) {
         log.error(`falha ao enviar ${a.tipo} para ${mascarar(c.telefone)}:`, e?.message ?? e)
@@ -151,6 +157,7 @@ export function criarApp({ db, wa, cfg, opcoes = {}, agora = () => Date.now(), l
         break
       }
     }
+    c.estado = { ...c.estado, menu }
     c.bot_em = agora()
     db.salvarConversa(c, agora())
   }

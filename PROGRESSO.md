@@ -1,8 +1,17 @@
 # Progresso e retomada
 
-Atualizado em: 2026-10-04
+Atualizado em: 2026-10-06
 
 ## Ponto de retomada
+**2026-10-06: o cliente decidiu seguir com bot + WAHA, sem n8n. Adaptador escrito e testado só com WhatsApp simulado; nada foi ligado nem conectado.**
+
+- Feito: `src/waha.js` (webhook com HMAC, envio de texto e PDF, menu numerado no lugar de botões, vendedor assumindo pelo celular), escolha do provedor por `WAHA_URL`, serviço `waha` no `docker-compose.yml`, 94 testes passando.
+- Conferido na documentação do WAHA em 2026-10-06: desde a versão 2026.6.1 o envio de arquivos é gratuito; eventos `message.any` com `source` `api`/`app`; assinatura no cabeçalho `X-Webhook-Hmac` (SHA-512).
+- Não verificado com WhatsApp real: formato dos eventos em cada motor, campo `source`, número atrás de `@lid`, detecção de anúncio (`externalAdReply`), envio do PDF. Primeiro teste: `NUMEROS_TESTE` + roteiro em `docs/OPERACAO.md`, seção "WAHA".
+- Em aberto: risco de bloqueio do número por ser API não oficial; `docs/ESPEC.md`, `docs/FUNIL.md` e `docs/TESTES.md` ainda descrevem a YCloud e os botões.
+- Recibos de entrega do PDF não existem no WAHA nesta versão do adaptador: a proposta fica como "accepted".
+
+### Histórico: teste com a YCloud
 **Pausado em 2026-10-04 a pedido do cliente. Bot e túnel desligados. Decisão de caminho em aberto.**
 
 Primeiro teste real (número de teste final 8963, conta YCloud do cliente, coexistência no plano gratuito):

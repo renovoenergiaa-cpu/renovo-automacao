@@ -4,7 +4,27 @@ services:
     restart: unless-stopped
     env_file: .env
     ports:
-      - "127.0.0.1:3000:3000" # exponha por um proxy HTTPS ou túnel; nunca direto na internet
+      - "127.0.0.1:3000:3000" # só para consultar /saude; o WAHA fala com o bot pela rede interna
     volumes:
       - ./data:/app/data # banco e PDFs (dados de clientes)
       - ./config:/app/config:ro # textos, empresa e tabela: editar e reiniciar
+
+  # WhatsApp conectado por QR code. Exige versão 2026.6.1 ou mais nova (envio de PDF na versão gratuita).
+  waha:
+    image: ${WAHA_IMAGEM:-devlikeapro/waha} # em servidor ARM (Oracle A1): devlikeapro/waha:arm
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3000" # painel para ler o QR code: http://localhost:3001/dashboard
+    environment:
+      WAHA_API_KEY: ${WAHA_API_KEY:?defina no .env}
+      WAHA_DASHBOARD_USERNAME: admin
+      WAHA_DASHBOARD_PASSWORD: ${WAHA_PAINEL_SENHA:?defina no .env}
+      WHATSAPP_HOOK_URL: http://bot:3000/webhook/waha
+      WHATSAPP_HOOK_EVENTS: message.any
+      WHATSAPP_HOOK_HMAC_KEY: ${WAHA_WEBHOOK_SECRET:?defina no .env}
+      WHATSAPP_RESTART_ALL_SESSIONS: "True"
+    volumes:
+      - waha-sessao:/app/.sessions # login do WhatsApp: quem tiver este volume controla o número
+
+volumes:
+  waha-sessao:

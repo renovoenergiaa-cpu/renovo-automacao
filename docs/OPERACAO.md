@@ -17,6 +17,26 @@ Com Docker: `docker compose up -d --build`. O bot escuta na porta 3000 e precisa
 
 Eventos a assinar na YCloud: `whatsapp.inbound_message.received`, `whatsapp.message.updated`, `whatsapp.smb.message.echoes`.
 
+## WAHA
+
+Caminho em uso desde 2026-10-06. O WAHA mantém um WhatsApp conectado por QR code e conversa com o bot pela rede interna do Docker: não precisa de túnel nem de endereço público.
+
+1. Copiar `.env.example` para `.env` e inventar os três segredos (`WAHA_API_KEY`, `WAHA_WEBHOOK_SECRET`, `WAHA_PAINEL_SENHA`). Preencher `NUMEROS_TESTE` com o celular que vai conversar com o bot.
+2. `docker compose up -d --build`
+3. Abrir `http://localhost:3001/dashboard` (usuário `admin`, senha `WAHA_PAINEL_SENHA`), iniciar a sessão `default` e ler o QR code com o WhatsApp do número de teste (Aparelhos conectados).
+4. Do celular de teste, mandar "oi" e seguir o roteiro da seção "Teste com o número de teste".
+
+O que muda em relação à API oficial:
+
+- **Sem botões.** Cada pergunta sai como menu numerado e o cliente responde com o número. Digitar o nome da opção também vale.
+- **Risco de bloqueio.** É uma API não oficial: o WhatsApp pode banir o número, sem aviso. O bot espera 1,2 s antes de cada mensagem para não disparar em rajada, mas isso não elimina o risco. Não usar para disparo em massa.
+- **Anúncio.** Sem `BOT_SEM_ANUNCIO=1` o bot só fala com quem veio de anúncio, e a detecção de anúncio no WAHA ainda não foi conferida com uma mensagem real. Com `BOT_SEM_ANUNCIO=1` ele responde a todo contato novo do número, inclusive quem não é lead.
+- **Celular ligado à internet.** Se o aparelho ficar muitos dias fora do ar, o WhatsApp desconecta a sessão e é preciso ler o QR code de novo.
+- **Telefone nos comandos.** Celulares brasileiros podem aparecer sem o 9 inicial; use o número como aparece em `npm run cli -- leads`.
+- **Vendedor assumindo.** Funciona igual: respondeu pelo celular, o bot sai da conversa.
+
+Para o n8n receber as mesmas mensagens (planilha, CRM, avisos), cadastrar um segundo webhook na sessão pelo painel do WAHA. O bot não depende dele.
+
 ## Comandos
 
 `npm run cli -- <comando>`

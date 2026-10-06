@@ -1,5 +1,6 @@
 {
   "_limites": "Botão: até 20 caracteres. Linha de lista: até 24. Rodapé: até 60. Use {chaves} para variáveis.",
+  "instrucao_menu": "_Responda com o número da opção._",
   "abertura": "Olá{saudacao_nome}! Aqui é o assistente virtual da *{empresa}* ☀️\n\nCom 4 perguntas rápidas eu preparo uma *estimativa em PDF* do sistema de energia solar para o seu imóvel.\n\nUso suas respostas só para montar a estimativa e para a nossa equipe falar com você. A qualquer momento, digite *atendente* para falar com uma pessoa ou *parar* para encerrar.{privacidade}",
   "pergunta_cidade": "Em qual cidade fica o imóvel?",
   "pergunta_cidade_outra": "Qual é a sua cidade? Digite o nome.",
@@ -44,8 +45,8 @@
   "fora_nao": "Não, obrigado",
   "fora_avisar_resposta": "Anotado! Se passarmos a atender {cidade}, entramos em contato por aqui. Obrigado pelo interesse.",
   "fora_nao_resposta": "Tudo bem. Obrigado pelo contato!",
-  "nao_entendi": "Não entendi 😅 Toque em uma das opções abaixo, ou digite *atendente* para falar com uma pessoa.",
-  "midia": "Por aqui eu ainda não consigo ouvir áudios nem abrir arquivos 🙂 Toque em uma das opções abaixo, ou digite *atendente* para falar com uma pessoa.",
+  "nao_entendi": "Não entendi 😅 Escolha uma das opções abaixo, ou digite *atendente* para falar com uma pessoa.",
+  "midia": "Por aqui eu ainda não consigo ouvir áudios nem abrir arquivos 🙂 Escolha uma das opções abaixo, ou digite *atendente* para falar com uma pessoa.",
   "opcao_antiga": "Essa opção era de uma pergunta anterior. Vamos continuar daqui:",
   "nome_invalido": "Não consegui ler o nome. Pode digitar só seu nome e sobrenome?",
   "retomada": "Que bom te ver de novo! Continuamos de onde paramos (para começar do zero, digite *recomeçar*).",
