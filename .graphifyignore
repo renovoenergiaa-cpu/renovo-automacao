@@ -1,0 +1,13 @@
+# complementa o .gitignore (segredos, data/, storage/, insumos/ já excluídos lá)
+.env*
+data/
+storage/
+insumos/
+*.pdf
+*.sqlite*
+
+# ferramentas de desenvolvimento, irrelevantes para o grafo do produto
+.claude/
+.agents/
+skills-lock.json
+node_modules/

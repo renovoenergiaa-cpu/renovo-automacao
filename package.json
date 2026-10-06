@@ -1,0 +1,19 @@
+{
+  "name": "renovo-automacao",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Bot de WhatsApp (API oficial via YCloud) que qualifica leads de energia solar e envia estimativa em PDF",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env src/server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/*.test.js\"",
+    "exemplo": "node --disable-warning=ExperimentalWarning scripts/exemplo-pdf.js",
+    "cli": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env src/cli.js"
+  },
+  "dependencies": {
+    "pdfkit": "^0.20.2"
+  }
+}

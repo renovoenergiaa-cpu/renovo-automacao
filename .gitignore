@@ -1,0 +1,28 @@
+# segredos
+.env
+.env.*
+!.env.example
+
+# dados de clientes e arquivos gerados
+data/
+storage/
+*.sqlite
+*.sqlite-*
+*.db
+
+# materiais brutos recebidos da empresa (podem conter dados de clientes)
+insumos/
+
+# dependências e caches
+node_modules/
+__pycache__/
+.venv/
+# grafo do código: derivado, refaz com `graphify update .`
+graphify-out/
+.DS_Store
+
+# skills de terceiros instaladas para o desenvolvimento: reinstalar com
+#   npx skills experimental_install   (lê skills-lock.json)
+#   graphify install --project
+.claude/skills/
+.claude/*.graphify-bak

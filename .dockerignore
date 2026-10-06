@@ -1,0 +1,12 @@
+.git
+.env
+.env.*
+data
+insumos
+node_modules
+test
+docs
+exemplos
+.claude
+.agents
+graphify-out

@@ -1,0 +1,10 @@
+services:
+  bot:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:3000:3000" # exponha por um proxy HTTPS ou túnel; nunca direto na internet
+    volumes:
+      - ./data:/app/data # banco e PDFs (dados de clientes)
+      - ./config:/app/config:ro # textos, empresa e tabela: editar e reiniciar

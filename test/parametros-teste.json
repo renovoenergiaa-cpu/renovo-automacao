@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "versao": "0.1.0-ficticio",
+    "data": "2026-10-04",
+    "origem": "Valores de EXEMPLO criados para desenvolvimento e testes. Não são da empresa nem de nenhum fornecedor.",
+    "ficticio": true,
+    "aprovado": false,
+    "aprovado_por": null,
+    "aprovado_em": null
+  },
+  "tarifa_reais_por_kwh": 0.95,
+  "custo_disponibilidade_kwh": 50,
+  "fator_economia": 0.85,
+  "mostrar_retorno": true,
+  "conta_minima_reais": 150,
+  "max_paineis_automatico": 20,
+  "faixas_conta": [
+    {
+      "id": "ate150",
+      "rotulo": "Até R$ 150",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "150a300",
+      "rotulo": "R$ 150 a R$ 300",
+      "min": 150,
+      "max": 300
+    },
+    {
+      "id": "300a500",
+      "rotulo": "R$ 300 a R$ 500",
+      "min": 300,
+      "max": 500
+    },
+    {
+      "id": "500a800",
+      "rotulo": "R$ 500 a R$ 800",
+      "min": 500,
+      "max": 800
+    },
+    {
+      "id": "800a1200",
+      "rotulo": "R$ 800 a R$ 1.200",
+      "min": 800,
+      "max": 1200
+    },
+    {
+      "id": "acima1200",
+      "rotulo": "Acima de R$ 1.200",
+      "min": 1200,
+      "max": null
+    },
+    {
+      "id": "naosei",
+      "rotulo": "Não sei",
+      "min": null,
+      "max": null
+    }
+  ],
+  "imoveis": [
+    {
+      "id": "casa",
+      "rotulo": "Casa",
+      "sinonimos": [
+        "residencia",
+        "sobrado"
+      ]
+    },
+    {
+      "id": "comercio",
+      "rotulo": "Comércio",
+      "sinonimos": [
+        "loja",
+        "empresa",
+        "comercial",
+        "escritorio"
+      ]
+    },
+    {
+      "id": "apto",
+      "rotulo": "Apto ou condomínio",
+      "sem_telhado": true,
+      "ressalva": "Em apartamento ou condomínio, a instalação depende de área disponível e de autorização do condomínio.",
+      "sinonimos": [
+        "apartamento",
+        "apto",
+        "condominio",
+        "predio"
+      ]
+    }
+  ],
+  "telhados": [
+    {
+      "id": "ceramica",
+      "rotulo": "Cerâmica (barro)",
+      "sinonimos": [
+        "ceramica",
+        "barro",
+        "colonial"
+      ]
+    },
+    {
+      "id": "metalico",
+      "rotulo": "Metálico",
+      "sinonimos": [
+        "metal",
+        "zinco",
+        "galvanizado"
+      ]
+    },
+    {
+      "id": "fibrocimento",
+      "rotulo": "Fibrocimento",
+      "analise_humana": true,
+      "sinonimos": [
+        "eternit",
+        "brasilit",
+        "amianto"
+      ]
+    },
+    {
+      "id": "laje",
+      "rotulo": "Laje",
+      "analise_humana": true,
+      "sinonimos": [
+        "laje"
+      ]
+    },
+    {
+      "id": "solo",
+      "rotulo": "Solo ou outro",
+      "analise_humana": true,
+      "sinonimos": [
+        "solo",
+        "chao",
+        "terreno"
+      ]
+    },
+    {
+      "id": "naosei",
+      "rotulo": "Não sei"
+    }
+  ],
+  "kits": [
+    {
+      "id": "K04",
+      "paineis": 4,
+      "potencia_modulo_w": 550,
+      "inversor": "Inversor exemplo 2 kW",
+      "preco_reais": 9900,
+      "geracao_kwh_mes": 253
+    },
+    {
+      "id": "K06",
+      "paineis": 6,
+      "potencia_modulo_w": 550,
+      "inversor": "Inversor exemplo 3 kW",
+      "preco_reais": 13500,
+      "geracao_kwh_mes": 379.5
+    },
+    {
+      "id": "K08",
+      "paineis": 8,
+      "potencia_modulo_w": 550,
+      "inversor": "Inversor exemplo 4 kW",
+      "preco_reais": 16900,
+      "geracao_kwh_mes": 506
+    },
+    {
+      "id": "K10",
+      "paineis": 10,
+      "potencia_modulo_w": 550,
+      "inversor": "Inversor exemplo 5 kW",
+      "preco_reais": 19900,
+      "geracao_kwh_mes": 632.5
+    },
+    {
+      "id": "K12",
+      "paineis": 12,
+      "potencia_modulo_w": 550,
+      "inversor": "Inversor exemplo 6 kW",
+      "preco_reais": 23500,
+      "geracao_kwh_mes": 759
+    },
+    {
+      "id": "K16",
+      "paineis": 16,
+      "potencia_modulo_w": 550,
+      "inversor": "Inversor exemplo 8 kW",
+      "preco_reais": 29900,
+      "geracao_kwh_mes": 1012
+    },
+    {
+      "id": "K20",
+      "paineis": 20,
+      "potencia_modulo_w": 550,
+      "inversor": "Inversor exemplo 10 kW",
+      "preco_reais": 36500,
+      "geracao_kwh_mes": 1265
+    }
+  ],
+  "itens_incluidos": [
+    "(exemplo) Módulos fotovoltaicos e inversor do kit",
+    "(exemplo) Estrutura de fixação para o telhado informado",
+    "(exemplo) Instalação e projeto elétrico",
+    "(exemplo) Solicitação de acesso junto à distribuidora"
+  ],
+  "itens_nao_incluidos": [
+    "(exemplo) Reforço de telhado ou obras civis",
+    "(exemplo) Adequação do padrão de entrada de energia",
+    "(exemplo) Taxas cobradas pela distribuidora"
+  ],
+  "condicoes": [
+    "(exemplo) Formas de pagamento definidas na proposta comercial"
+  ],
+  "garantias": [],
+  "mostrar_economia": true
+}
